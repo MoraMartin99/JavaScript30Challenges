@@ -78,34 +78,13 @@
                 const hourHand = document.querySelector(".hour-hand");
                 const minHand = document.querySelector(".min-hand");
                 const secHand = document.querySelector(".second-hand");
-                const deltaH = 0.0083;
-                const deltaM = 0.1;
-                const deltaS = 6;
-                const arrInitialDelta = getInitialDelta();
-                let currentDegH = arrInitialDelta[0];
-                let currentDegM = arrInitialDelta[1];
-                let currentDegS = arrInitialDelta[2];
-                rotateElement(hourHand, currentDegH);
-                rotateElement(minHand, currentDegM);
-                rotateElement(secHand, currentDegS);
-
-                setInterval(() => {
-                    currentDegH =
-                        currentDegH + deltaH > 360
-                            ? currentDegH + deltaH - 360
-                            : currentDegH + deltaH;
-                    currentDegM =
-                        currentDegM + deltaM > 360
-                            ? currentDegM + deltaM - 360
-                            : currentDegM + deltaM;
-                    currentDegS =
-                        currentDegS + deltaS > 360
-                            ? currentDegS + deltaS - 360
-                            : currentDegS + deltaS;
-                    rotateElement(hourHand, currentDegH);
-                    rotateElement(minHand, currentDegM);
-                    rotateElement(secHand, currentDegS);
-                }, 1000);
+                const arrPosition = getPosition();
+                let positionH = arrPosition[0];
+                let positionM = arrPosition[1];
+                let positionS = arrPosition[2];
+                rotateElement(hourHand, positionH);
+                rotateElement(minHand, positionM);
+                rotateElement(secHand, positionS);
             };
             const rotateElement = (element, DeltaAngle) => {
                 element.style.cssText = `transform-origin: right center; transform: rotate(${DeltaAngle}deg)`;
@@ -122,7 +101,7 @@
                     return date.getSeconds();
                 }
             };
-            const getInitialDelta = () => {
+            const getPosition = () => {
                 const hour = getActualTime("h") == 12 ? 0 : getActualTime("h");
                 const min = getActualTime("m");
                 const sec = getActualTime("s");
@@ -134,7 +113,8 @@
                 deltaS = deltaS > 360 ? deltaS - 360 : deltaS;
                 return [deltaH, deltaM, deltaS];
             };
-            window.addEventListener("load", startClock);
+            startClock();
+            setInterval(startClock, 1000);
         </script>
     </body>
 </html>
