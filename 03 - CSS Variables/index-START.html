@@ -38,8 +38,8 @@
 
         <style>
             /*
-      misc styles, nothing to do with CSS variables
-    */
+                misc styles, nothing to do with CSS variables
+              */
 
             body {
                 text-align: center;
@@ -48,6 +48,9 @@
                 font-family: "helvetica neue", sans-serif;
                 font-weight: 100;
                 font-size: 50px;
+                --spacing: 10px;
+                --blur: 10px;
+                --baseColor: #ffc600;
             }
 
             .controls {
@@ -57,8 +60,36 @@
             input {
                 width: 100px;
             }
+            img {
+                padding: var(--spacing);
+                background-color: var(--baseColor);
+                filter: blur(var(--blur));
+            }
+            .hl {
+                color: var(--baseColor);
+            }
         </style>
 
-        <script></script>
+        <script>
+            const spacing = document.querySelector("#spacing");
+            const blur = document.querySelector("#blur");
+            const color = document.querySelector("#base");
+
+            const updateCSSVar = (event) => {
+                const id = event.target.id;
+                const value = event.target.value;
+
+                if (id == "spacing") {
+                    document.body.style.setProperty("--spacing", ` ${value}px`);
+                } else if (id == "blur") {
+                    document.body.style.setProperty("--blur", ` ${value}px`);
+                } else if (id == "base") {
+                    document.body.style.setProperty("--baseColor", ` ${value}`);
+                }
+            };
+            spacing.addEventListener("input", updateCSSVar);
+            blur.addEventListener("input", updateCSSVar);
+            color.addEventListener("input", updateCSSVar);
+        </script>
     </body>
 </html>
