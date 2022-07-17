@@ -13,9 +13,50 @@
                 <li>or a state</li>
             </ul>
         </form>
+        <span class="hl"></span>
         <script>
             const endpoint =
                 "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
+            const suggestionsContainer = document.querySelector(".suggestions");
+            const inputBox = document.querySelector("input");
+
+            const getData = (httpMethod, Url, isAsync, callBack) => {
+                const XHR = new XMLHttpRequest();
+                XHR.open(httpMethod, Url, isAsync);
+                XHR.responseType = "json";
+                XHR.onload = () => {
+                    if (XHR.status == 200) {
+                        let response = XHR.response;
+                        callBack(response);
+                    }
+                };
+                XHR.send();
+            };
+
+            const createElements = (response) => {
+                inputBox.addEventListener("input", () => {
+                    const term = new RegExp(`(${inputBox.value})`, "gi");
+                    const suggestionsContainerChilds = Array.from(suggestionsContainer.querySelectorAll(" *"));
+                    suggestionsContainerChilds.forEach((item) => {
+                        item.remove();
+                    });
+
+                    response.forEach((item) => {
+                        if (term.test(item.city) || term.test(item.state)) {
+                            const city = item.city.replaceAll(term, `<span class="hl">$1</span>`);
+                            const state = item.state.replaceAll(term, `<span class="hl">$1</span>`);
+                            const population = `<span class="population">${parseInt(item.population).toLocaleString(
+                                "en-US"
+                            )}</span>`;
+                            const li = document.createElement("li");
+                            li.innerHTML = `<div>${city}, ${state}</div> ${population}`;
+                            suggestionsContainer.append(li);
+                        }
+                    });
+                });
+            };
+
+            getData("GET", endpoint, true, createElements);
         </script>
     </body>
 </html>
