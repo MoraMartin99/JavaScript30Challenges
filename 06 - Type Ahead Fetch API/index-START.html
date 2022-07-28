@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Type Ahead 👀</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <form class="search-form">
+            <input type="text" class="search" placeholder="City or State" />
+            <ul class="suggestions">
+                <li>Filter for a city</li>
+                <li>or a state</li>
+            </ul>
+        </form>
+        <span class="hl"></span>
+        <div></div>
+        <script>
+            const endpoint =
+                "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
+            const inputBox = document.querySelector("input.search");
+            const suggestionsContainer = document.querySelector("ul.suggestions");
+
+            const getData = async (url) => {
+                const response = await fetch(url);
+                const data = await response.json();
+                const numberFormat = new Intl.NumberFormat("en-US");
+                inputBox.addEventListener("keyup", () => {
+                    const regex = new RegExp(`(${event.currentTarget.value})`, "gi");
+                    const liArr = Array.from(suggestionsContainer.querySelectorAll("*"));
+                    const newChildArr = data.filter((item) => {
+                        return regex.test(item.city) || regex.test(item.state);
+                    });
+
+                    liArr.forEach((item) => {
+                        item.remove();
+                    });
+
+                    newChildArr.forEach((item) => {
+                        const city = item.city.replaceAll(regex, `<span class="hl">$1</span>`);
+                        const state = item.state.replaceAll(regex, `<span class="hl">$1</span>`);
+                        const population = `<span class="population">${numberFormat.format(
+                            parseInt(item.population)
+                        )}</span>`;
+                        const child = document.createElement("li");
+                        child.innerHTML = `<div>${city}, ${state}</div> ${population}`;
+                        suggestionsContainer.append(child);
+                    });
+                });
+            };
+            getData(endpoint).catch((error) => {
+                console.log(error);
+            });
+        </script>
+    </body>
+</html>
